@@ -38,7 +38,7 @@ fn build_input(lines: &Vec<&str>) -> Vec<Command> {
 
 fn compute_output(commands: &Vec<Command>) -> u16 {
     let mut position: u16 = 50;
-    let mut dial_pass: u16 = 0;
+    let mut dial_pass: i32 = 0;
 
     for command in commands.iter() {
         let step: i32 = match command {
@@ -47,20 +47,16 @@ fn compute_output(commands: &Vec<Command>) -> u16 {
         };
 
         let temp = position as i32 + step;
-        position = temp.rem_euclid(100).try_into().unwrap();
 
-        dial_pass += (step.div_euclid(100)).try_into().unwrap();
-
-        if position == 0 {
-            dial_pass += 1;
-        } else if temp > 100 && temp <= (100 + step) {
-            dial_pass += 1;
-        } else if temp < 0 && temp >= step {
-            dial_pass += 1;
+        dial_pass += (temp / 100).abs();
+        if position != 0 && temp <= 0 {
+            dial_pass += 1
         }
+
+        position = temp.rem_euclid(100).try_into().unwrap();
     }
 
-    dial_pass
+    dial_pass.try_into().unwrap()
 }
 
 
